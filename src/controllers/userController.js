@@ -168,8 +168,14 @@ const refreshAccessToken = async (req, res) => {
 
 // get user
 const getUser = async (req, res) => {
-  console.log(req.user, "req.user");
-  return res.status(200).json({ user: req.user });
+
+  const user =  await prisma.user.findUnique({where : { email : req.user.email } , select: { id: true, email: true, name: true, avatarUrl: true, createdAt: true }})
+
+  if(!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  return res.status(200).json({ user: user });
 }
 
 // forgot password
@@ -199,7 +205,7 @@ const forgotPassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await prisma.user.update({ where: { id: req.user.id }, data: { password: hashedPassword } });
-    
+
     return res.status(200).json({ message: "Password updated successfully" });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
