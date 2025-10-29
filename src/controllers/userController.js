@@ -87,15 +87,16 @@ const loginUser = async (req, res) => {
 
     const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      // secure: process.env.NODE_ENV === "production",
+      secure: false,
+      sameSite: "lax",
     };
 
-    res
+     res
       .status(200)
       .cookie("accessToken", accessToken, cookieOptions)
-      .cookie("refreshToken", refreshToken, cookieOptions)
-      .json({ message: "Login successful" });
+    .cookie("refreshToken", refreshToken, cookieOptions)
+    .json({ message: "Login successful" });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

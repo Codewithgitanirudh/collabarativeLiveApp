@@ -11,7 +11,13 @@ dotenv.config({path: "./.env"});
 const app = express();
 
 // Add CORS and JSON parsing middleware
-app.use(cors());
+app.use(
+  cors({
+    origin:  process.env.FRONTEND_URL, // your React app origin
+    credentials: true, // allow cookies
+  })
+);
+
 app.use(express.json({limit: "16kb"}));
 app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(cookieParser());
@@ -22,8 +28,9 @@ const server = http.createServer(app);
 // Configure Socket.IO with CORS
 const io = new Server(server, {
   cors: {
-    origin: "*", // Allow all origins for development
-    methods: ["GET", "POST"]
+    origin: process.env.FRONTEND_URL, // Allow all origins for development
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
